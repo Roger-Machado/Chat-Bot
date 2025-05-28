@@ -77,3 +77,23 @@ chatInput.addEventListener("keydown", function (e) {
     handleChat();
   }
 });
+
+const toggler = document.querySelector(".chatbot-toggler");
+const body = document.body;
+
+toggler.addEventListener("click", () => {
+  body.classList.toggle("show-chatbot");
+});
+
+const modeToggler = document.querySelector(".mode-toggler");
+const icon = modeToggler.querySelector("span");
+
+modeToggler.addEventListener("click", () => {
+  body.classList.toggle("dark-mode");
+
+  if (body.classList.contains("dark-mode")) {
+    icon.textContent = "light_mode"; // troca para sol
+  } else {
+    icon.textContent = "dark_mode"; // troca para lua
+  }
+});

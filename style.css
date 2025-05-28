@@ -162,6 +162,70 @@ body {
   visibility: visible;
 }
 
+/*botão toggler (abrir e fechar)*/
+
+.chatbot {
+  display: none;
+}
+
+body.show-chatbot .chatbot {
+  display: block;
+}
+
+/*Mudar cor da tela com toggler*/
+
+.mode-toggler {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 40px; 
+  color: #555;
+  z-index: 1000;
+  transition: color 0.3s;
+}
+
+.mode-toggler .material-symbols-outlined {
+  font-size: 40px; 
+  color: #555;
+  transition: color 0.3s;
+}
+
+.mode-toggler:hover .material-symbols-outlined {
+  color: #000;
+}
+
+body.dark-mode .mode-toggler .material-symbols-outlined {
+  color: #eee;
+}
+
+.mode-toggler:focus {
+  outline: none; /
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #eee;
+}
+
+.chatbot {
+  background-color: white;
+  color: black;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode .chatbot {
+  background-color: #222;
+  color: #ddd;
+}
+
 @media (max-width: 490px) {
   .chatbot {
     right: 0;
