@@ -10,11 +10,9 @@ const modeToggler = document.querySelector(".mode-toggler");
 let userMessage = null;
 const inputInitHeight = chatInput.scrollHeight;
 
-// ** SUA CHAVE DE API DO HUGGING FACE AQUI **
+// ** CHAVE DE API DO HUGGING FACE **
 const HUGGINGFACE_API_KEY = "hf_SUA_CHAVE_DE_API_DO_HUGGING_FACE_AQUI"; // <<-- SUBSTITUA ISSO!
 // ** ENDPOINT DA API DO HUGGING FACE **
-// Você pode encontrar o endpoint na página do modelo no Hugging Face, na seção "Deploy" ou "Inference API"
-// Ex: para um modelo de geração de texto, pode ser algo como:
 const HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/gpt2"; // Exemplo para gpt2
 
 // Função para criar um novo elemento de mensagem no chatbox
