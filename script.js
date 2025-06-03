@@ -1,21 +1,11 @@
-// Seleciona os elementos do DOM
-const chatbotToggler = document.querySelector(".chatbot-toggler");
-const closeBtn = document.querySelector(".chatbot header span");
-const sendBtn = document.querySelector("#send-btn");
 const chatInput = document.querySelector(".chat-input textarea");
+const sendChatBtn = document.querySelector(".chat-input span");
 const chatbox = document.querySelector(".chatbox");
-const modeToggler = document.querySelector(".mode-toggler");
 
-// Variáveis de controle
-let userMessage = null;
-const inputInitHeight = chatInput.scrollHeight;
+let userMessage;
+const API_KEY = "AIzaSyA804sysVC42K7fNMyuMRuYi4XbrdpT1BM";
+const isTyping = false;
 
-// ** CHAVE DE API DO HUGGING FACE **
-const HUGGINGFACE_API_KEY = "hf_SUA_CHAVE_DE_API_DO_HUGGING_FACE_AQUI"; // <<-- SUBSTITUA ISSO!
-// ** ENDPOINT DA API DO HUGGING FACE **
-const HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/gpt2"; // Exemplo para gpt2
-
-// Função para criar um novo elemento de mensagem no chatbox
 const createChatLi = (message, className) => {
   const chatLi = document.createElement("li");
   chatLi.classList.add("chat", className);
@@ -27,136 +17,101 @@ const createChatLi = (message, className) => {
   return chatLi;
 };
 
-// Função para gerar uma resposta do chatbot usando Hugging Face API
-const generateResponse = async (chatElement) => {
-  const messageElement = chatElement.querySelector("p");
+const generateResponse = (typingElement) => {
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-  // O "prompt" ou "contexto" que você envia para a IA.
-  // Isso instrui a IA sobre o papel dela e as informações da loja.
-  const storeContext = `Você é um assistente de atendimento ao cliente para uma loja de departamentos chamada "MegaStore".
-  Nossa MegaStore vende uma ampla variedade de produtos eletrônicos e vestuário.
-  Em eletrônicos, temos: smartphones (Samsung, Apple, Xiaomi), laptops (Dell, HP, Apple), TVs (LG, Samsung, Sony), fones de ouvido, acessórios de informática, câmeras e videogames.
-  Em vestuário, temos: roupas femininas (vestidos, blusas, calças, saias), roupas masculinas (camisas, camisetas, calças, jaquetas), roupas infantis, calçados (tênis, sapatos, sandálias) e acessórios (bolsas, cintos, joias).
-  Nosso horário de funcionamento é de segunda a sábado, das 9h às 21h, e aos domingos e feriados, das 10h às 18h.
-  Estamos localizados na Avenida Principal, 456, Centro.
-  Aceitamos Pix, cartões de crédito (Visa, MasterCard, Elo) e débito.
-  Não realizamos entregas para compras feitas na loja física.
-  Não vendemos carros, motos ou produtos de grande porte.
-  Para trocas, o prazo é de 30 dias com a nota fiscal e produto sem uso.
-  Responda de forma amigável e útil, com base nas informações fornecidas sobre a MegaStore.
-  Se a pergunta não for clara ou não tiver relação com a loja, peça mais detalhes ou sugira que o cliente visite a loja ou ligue para o atendimento.
-  Não invente informações.`;
+const shopContext = `Você é um assistente de chatbot para uma loja de departamentos fictícia chamada "Mega Store". Seu objetivo é ajudar os clientes com perguntas sobre produtos eletrônicos e vestuário.
+    **Exemplos de produtos eletrônicos que vendemos:**
+    - Smartphones (diversas marcas e modelos)
+    - Laptops (notebooks para trabalho e jogos)
+    - Smart TVs (4K, OLED, QLED)
+    - Fones de ouvido (com e sem fio)
+    - Câmeras digitais
+    **Exemplos de produtos de vestuário que vendemos:**
+    - Roupas masculinas (camisas, calças, jaquetas) 
+    - Roupas femininas (vestidos, blusas, saias)
+    - Calçados (tênis, sapatos, sandálias)
+    - Acessórios (cintos, bolsas, joias)
 
-  // A mensagem completa a ser enviada para o modelo da IA
-  const fullPrompt = `${storeContext}\n\nCliente: ${userMessage}\nAssistente:`;
+    Não invente produtos que não estejam nestas categorias ou que não seriam esperados em uma loja de departamentos. Se não souber a resposta, diga que não tem essa informação no momento, mas pode tentar ajudar com algo relacionado a eletrônicos ou vestuário.`;
 
-  const requestOptions = {
+const requestOptions = {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${HUGGINGFACE_API_KEY}`, // Sua chave de API aqui
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      inputs: fullPrompt, // O texto completo com contexto e pergunta
-      parameters: {
-        max_new_tokens: 150, // Limita o tamanho da resposta da IA
-        temperature: 0.7,    // Controla a criatividade da resposta (0.0 a 1.0)
-        do_sample: true,     // Ativa amostragem para respostas mais variadas
-        // clean_up_tokenization_spaces: true // Pode ser útil para alguns modelos
-      }
+      contents: [
+        'Você é um assistente de chatbot para uma loja de departamentos fictícia chamada "Mega Store". Seu objetivo é ajudar os clientes com perguntas sobre produtos eletrônicos e vestuário.',
+        shopContext,
+        {
+          role: "user",
+          parts: [{ text:shopContext + "\n\n" + userMessage }],
+        },
+      ],
     }),
   };
 
-  try {
-    const response = await fetch(HUGGINGFACE_API_URL, requestOptions);
-    const data = await response.json();
-
-    // A resposta da API do Hugging Face para geração de texto geralmente vem em um array
-    // como [{ generated_text: "..." }]
-    if (data && data.length > 0 && data[0].generated_text) {
-      let generatedText = data[0].generated_text;
-
-      // Importante: a IA pode repetir o prompt, então precisamos extrair apenas a resposta.
-      // Procuramos pelo marcador "Assistente:" e pegamos o que vem depois.
-      const assistantResponseIndex = generatedText.indexOf("Assistente:");
-      if (assistantResponseIndex !== -1) {
-        generatedText = generatedText.substring(assistantResponseIndex + "Assistente:".length).trim();
-      } else {
-        // Se a IA não incluiu "Assistente:", talvez ela só tenha continuado o texto.
-        // Nesses casos, tente pegar o que vem depois da sua própria mensagem no prompt.
-        const userMessageIndex = generatedText.indexOf(`Cliente: ${userMessage}\nAssistente:`);
-        if (userMessageIndex !== -1) {
-          generatedText = generatedText.substring(userMessageIndex + `Cliente: ${userMessage}\nAssistente:`.length).trim();
-        } else {
-          // Fallback se nada funcionar
-          generatedText = generatedText.trim();
-        }
-      }
-
-      // Remove qualquer sobra do prompt ou repetições indesejadas
-      generatedText = generatedText.replace(storeContext, "").trim();
-
-      messageElement.textContent = generatedText || "Desculpe, não consegui gerar uma resposta útil no momento. Por favor, tente novamente.";
-    } else {
-      messageElement.textContent = "Desculpe, não consegui obter uma resposta útil. Por favor, tente novamente mais tarde.";
-      console.error("Resposta inesperada da API Hugging Face:", data);
-    }
-  } catch (error) {
-    console.error("Erro ao chamar a API Hugging Face:", error);
-    messageElement.textContent = "Oops! Houve um erro ao se comunicar com o servidor. Por favor, verifique sua chave de API ou tente novamente.";
-  } finally {
-    chatbox.scrollTo(0, chatbox.scrollHeight);
-  }
+  fetch(API_URL, requestOptions)
+    .then((res) => res.json())
+    .then((data) => {
+      typingElement.remove(); // ✅ Agora funciona
+      const message =
+        data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "Desculpe, não consegui obter uma resposta para isso no momento.";
+      chatbox.appendChild(createChatLi(message, "incoming"));
+      chatbox.scrollTo(0, chatbox.scrollHeight);
+    })
+    .catch((error) => {
+      console.error("Erro na API do Gemini:", error);
+      typingElement.remove();
+      chatbox.appendChild(
+        createChatLi("Ocorreu um erro ao tentar obter uma resposta. Por favor, tente novamente mais tarde.", "incoming")
+      );
+      chatbox.scrollTo(0, chatbox.scrollHeight);
+    });
 };
 
-// Ajusta a altura do textarea dinamicamente
-chatInput.addEventListener("input", () => {
-  chatInput.style.height = `${inputInitHeight}px`;
-  chatInput.style.height = `${chatInput.scrollHeight}px`;
-});
+const handleChat = () => {
+  userMessage = chatInput.value.trim();
+  if (!userMessage) return;
 
-// Evento de clique para o botão de enviar
-sendBtn.addEventListener("click", handleChat);
+  chatInput.value = "";
 
-// Evento de tecla para enviar com Enter (e Shift+Enter para quebrar linha)
-chatInput.addEventListener("keydown", (e) => {
+  chatbox.appendChild(createChatLi(userMessage, "outgoing"));
+  chatbox.scrollTo(0, chatbox.scrollHeight);
+
+  setTimeout(() => {
+    const typingElement = createChatLi("Digitando...", "incoming");
+    chatbox.appendChild(typingElement);
+    chatbox.scrollTo(0, chatbox.scrollHeight); // Scroll após "Digitando..."
+    generateResponse(typingElement);
+  }, 600);
+};
+
+sendChatBtn.addEventListener("click", handleChat);
+
+chatInput.addEventListener("keydown", function (e) {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
     handleChat();
   }
 });
 
-// Função para lidar com o envio da mensagem do usuário
-const handleChat = () => {
-  userMessage = chatInput.value.trim();
-  if (!userMessage) return;
+const toggler = document.querySelector(".chatbot-toggler");
+const body = document.body;
 
-  chatInput.value = "";
-  chatInput.style.height = `${inputInitHeight}px`;
-
-  chatbox.appendChild(createChatLi(userMessage, "outgoing"));
-  chatbox.scrollTo(0, chatbox.scrollHeight);
-
-  const incomingChatLi = createChatLi("Digitando...", "incoming");
-  chatbox.appendChild(incomingChatLi);
-  chatbox.scrollTo(0, chatbox.scrollHeight);
-
-  setTimeout(() => {
-    generateResponse(incomingChatLi);
-  }, 600);
-};
-
-// Evento de clique para o botão de abrir/fechar o chatbot
-chatbotToggler.addEventListener("click", () => {
-  document.body.classList.toggle("show-chatbot");
+toggler.addEventListener("click", () => {
+  body.classList.toggle("show-chatbot");
 });
 
-// Evento de clique para o botão de fechar o chatbot (dentro do header)
-closeBtn.addEventListener("click", () => {
-  document.body.classList.remove("show-chatbot");
-});
+const modeToggler = document.querySelector(".mode-toggler");
+const icon = modeToggler.querySelector("span");
 
-// Evento de clique para o botão de modo (tema)
 modeToggler.addEventListener("click", () => {
-  document.body.classList.toggle("dark-mode");
+  body.classList.toggle("dark-mode");
+
+  if (body.classList.contains("dark-mode")) {
+    icon.textContent = "light_mode"; // troca para sol
+  } else {
+    icon.textContent = "dark_mode"; // troca para lua
+  }
 });

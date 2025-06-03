@@ -1,119 +1,139 @@
-/* Importa a fonte para todo o corpo */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
-
-/* Reset básico para todos os elementos */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif; /* Define a fonte padrão */
+  font-family: "Poppins", sans-serif;
 }
 
 body {
-  background: #f0f2f5; /* Um fundo claro para o corpo */
+  background: #e3f2fd;
 }
 
-/* Esconde o chatbot por padrão */
+.chatbot-toggler {
+  position: fixed;
+  right: 40px;
+  bottom: 35px;
+  height: 50px;
+  width: 50px;
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  cursor: pointer;
+  background: #724ae8;
+  border-radius: 50%;
+}
+
+.chatbot-toggler span {
+  position: absolute;
+}
+
+.show-chatbot .chatbot-toggler span:first-child,
+.chatbot-toggler span:last-child {
+  opacity: 0;
+}
+
+.show-chatbot .chatbot-toggler span:last-child {
+  opacity: 1;
+}
+
 .chatbot {
-  position: fixed; /* Posição fixa na tela */
-  right: 30px; /* Alinha à direita */
-  bottom: 90px; /* Alinha na parte inferior */
+  position: fixed;
+  right: 40px;
+  bottom: 100px;
   width: 420px;
-  background: #fff; /* Fundo branco */
-  border-radius: 15px; /* Bordas arredondadas */
+  transform: scale(0.5);
+  opacity: 0;
+  pointer-events: none;
+  background: #fff;
+  border-radius: 15px;
   box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1),
-    0 32px 64px -48px rgba(0, 0, 0, 0.5); /* Sombra */
-  transform: scale(0); /* Inicialmente escondido (tamanho zero) */
-  opacity: 0; /* Totalmente transparente */
-  pointer-events: none; /* Não interage com o mouse */
-  transition: all 0.2s ease; /* Transição suave para aparecer/desaparecer */
+    0 32px 64px -48px rgba(0, 0, 0, 0.5);
 }
 
-/* Quando a classe show-chatbot está no body, o chatbot aparece */
-body.show-chatbot .chatbot {
-  transform: scale(1); /* Volta ao tamanho normal */
-  opacity: 1; /* Torna-se visível */
-  pointer-events: auto; /* Permite interagir com o mouse */
+.show-chatbot .chatbot {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* Estilo do cabeçalho do chatbot */
 .chatbot header {
+  background: #724ae8;
   padding: 16px 0;
-  position: relative;
   text-align: center;
-  background: #724ae8; /* Cor de fundo roxa */
-  border-radius: 15px 15px 0 0; /* Bordas superiores arredondadas */
+  border-radius: 10px 10px 0 10px;
+  position: relative;
 }
 
 .chatbot header h2 {
-  color: #fff; /* Texto branco */
-  font-size: 1.4rem;
+  color: #fff;
+  font-size: 1, 4rem;
 }
 
 .chatbot header span {
   position: absolute;
   right: 20px;
   top: 50%;
-  transform: translateY(-50%);
   color: #fff;
   cursor: pointer;
+  display: none;
+  transform: translatey(-50%);
 }
 
-/* Estilo da área de mensagens */
 .chatbot .chatbox {
   height: 510px;
-  overflow-y: auto; /* Adiciona scroll se o conteúdo for grande */
-  padding: 15px 20px 70px; /* Espaçamento interno */
+  overflow-y: auto;
+  padding: 30px 20px 70px;
+  scrollbar-width: none;
 }
 
 .chatbox .chat {
-  display: flex; /* Para alinhar o ícone e o texto */
-  list-style: none; /* Remove marcadores de lista */
-  margin-bottom: 17px;
+  display: flex;
 }
 
 .chatbox .incoming span {
   height: 32px;
   width: 32px;
   color: #fff;
+  align-self: flex-end;
   background: #724ae8;
-  border-radius: 4px;
-  align-self: flex-end; /* Alinha o ícone na parte inferior */
   text-align: center;
   line-height: 32px;
+  border-radius: 4px;
   margin: 0 10px 7px 0;
 }
 
 .chatbox .outgoing {
   margin: 20px 0;
-  justify-content: flex-end; /* Alinha mensagens de saída à direita */
+  justify-content: flex-end;
 }
 
 .chatbox .chat p {
-  white-space: pre-wrap; /* Preserva quebras de linha e espaços */
+  color: #fff;
+  max-width: 75%;
+  font-size: 0.95rem;
   padding: 12px 16px;
   border-radius: 10px 10px 0 10px;
-  max-width: 75%; /* Limita a largura do balão */
-  color: #fff;
-  font-size: 0.95rem;
-  background: #724ae8; /* Cor de fundo para mensagens de saída */
+  background: #724ae8;
 }
 
 .chatbox .incoming p {
-  border-radius: 10px 10px 10px 0;
   color: #000;
-  background: #f2f2f2; /* Cor de fundo para mensagens de entrada */
+  background: #f2f2f2;
+  border-radius: 10px 10px 10px 10px 0;
 }
 
-/* Estilo da área de input */
 .chatbot .chat-input {
-  display: flex;
-  gap: 5px;
   position: absolute;
   bottom: 0;
   width: 100%;
+  display: flex;
+  gap: 5px;
   background: #fff;
-  padding: 5px 20px;
+  padding: 3px 20px;
   border-top: 1px solid #ccc;
 }
 
@@ -121,158 +141,92 @@ body.show-chatbot .chatbot {
   height: 55px;
   width: 100%;
   border: none;
-  outline: none; /* Remove a borda de foco padrão */
-  resize: none; /* Impede redimensionamento manual */
+  outline: none;
   font-size: 0.95rem;
-  padding: 16px 15px;
+  resize: none;
+  padding: 16px 15px 16px 0;
+  overflow: hidden;
 }
 
 .chat-input span {
-  align-self: flex-end; /* Alinha o botão de enviar na parte inferior */
+  align-self: flex-end;
+  height: 55px;
+  line-height: 55px;
   color: #724ae8;
   font-size: 1.35rem;
   cursor: pointer;
-  height: 55px;
-  width: 55px;
-  line-height: 55px;
-  text-align: center;
+  visibility: hidden;
 }
 
 .chat-input textarea:valid ~ span {
-  color: #724ae8; /* Muda a cor do ícone de enviar quando há texto */
+  visibility: visible;
 }
 
-/* Estilo dos botões toggler */
-.chatbot-toggler {
-  position: fixed;
-  right: 30px;
-  bottom: 30px;
-  height: 50px;
-  width: 50px;
-  background: #724ae8;
-  color: #fff;
-  border: none;
-  border-radius: 50%; /* Torna o botão redondo */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1),
-    0 32px 64px -48px rgba(0, 0, 0, 0.5);
+/*botão toggler (abrir e fechar)*/
+
+.chatbot {
+  display: none;
 }
 
-.chatbot-toggler span {
-  position: absolute;
+body.show-chatbot .chatbot {
+  display: block;
 }
 
-.chatbot-toggler .close {
-  opacity: 0; /* Esconde o ícone de fechar por padrão */
-}
+/*Mudar cor da tela com toggler*/
 
-body.show-chatbot .chatbot-toggler .close {
-  opacity: 1; /* Mostra o ícone de fechar quando o chatbot está aberto */
-}
-
-body.show-chatbot .chatbot-toggler .mode_comment {
-  opacity: 0; /* Esconde o ícone de chat quando o chatbot está aberto */
-}
-
-/* Estilo do botão de modo (tema) */
 .mode-toggler {
   position: fixed;
-  right: 30px;
-  top: 30px;
-  height: 50px;
-  width: 50px;
-  background: #fff;
-  color: #724ae8;
-  border: 1px solid #ddd;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
   cursor: pointer;
-  box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1),
-    0 32px 64px -48px rgba(0, 0, 0, 0.5);
+  font-size: 40px; 
+  color: #555;
+  z-index: 1000;
+  transition: color 0.3s;
 }
 
-/* Estilos para o modo escuro (adicionado à classe "dark-mode" no body) */
-body.dark-mode {
-  background: #252525;
+.mode-toggler .material-symbols-outlined {
+  font-size: 40px; 
+  color: #555;
+  transition: color 0.3s;
+}
+
+.mode-toggler:hover .material-symbols-outlined {
+  color: #000;
+}
+
+body.dark-mode .mode-toggler .material-symbols-outlined {
   color: #eee;
+}
+
+.mode-toggler:focus {
+  outline: none; /
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #eee;
+}
+
+.chatbot {
+  background-color: white;
+  color: black;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 body.dark-mode .chatbot {
-  background: #333;
-  box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.3),
-    0 32px 64px -48px rgba(0, 0, 0, 0.8);
+  background-color: #222;
+  color: #ddd;
 }
 
-body.dark-mode .chatbot header {
-  background: #555;
-}
-
-body.dark-mode .chatbot header h2 {
-  color: #eee;
-}
-
-body.dark-mode .chatbot header span {
-  color: #eee;
-}
-
-body.dark-mode .chatbox .incoming p {
-  background: #555;
-  color: #eee;
-}
-
-body.dark-mode .chatbox .incoming span {
-  background: #777;
-}
-
-body.dark-mode .chatbox .outgoing p {
-  background: #724ae8;
-  color: #fff;
-}
-
-body.dark-mode .chat-input {
-  background: #444;
-  border-top-color: #666;
-}
-
-body.dark-mode .chat-input textarea {
-  background: #444;
-  color: #eee;
-}
-
-body.dark-mode .chat-input textarea::placeholder {
-  color: #bbb;
-}
-
-body.dark-mode .chat-input span {
-  color: #999;
-}
-
-body.dark-mode .chat-input textarea:valid ~ span {
-  color: #724ae8;
-}
-
-body.dark-mode .chatbot-toggler {
-  background: #555;
-}
-
-body.dark-mode .mode-toggler {
-  background: #333;
-  color: #eee;
-  border-color: #555;
-}
-
-/* Responsividade para telas menores */
-@media (max-width: 800px) {
-  .chatbot-toggler {
-    right: 20px;
-    bottom: 20px;
-  }
+@media (max-width: 490px) {
   .chatbot {
     right: 0;
     bottom: 0;
@@ -282,12 +236,9 @@ body.dark-mode .mode-toggler {
   }
   .chatbot .chatbox {
     height: 90%;
-    padding: 25px 15px 100px;
   }
-  .chatbot .chat-input {
-    padding: 10px 15px;
-  }
+
   .chatbot header span {
-    display: block; /* Garante que o botão de fechar apareça no cabeçalho */
+    display: block;
   }
 }
