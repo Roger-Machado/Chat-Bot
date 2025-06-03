@@ -2,7 +2,9 @@ const chatInput = document.querySelector(".chat-input textarea");
 const sendChatBtn = document.querySelector(".chat-input span");
 const chatbox = document.querySelector(".chatbox");
 
+let userMessage;
 const API_KEY = "AIzaSyA804sysVC42K7fNMyuMRuYi4XbrdpT1BM";
+const isTyping = false;
 
 let chatHistory = [
     {
@@ -43,7 +45,6 @@ let chatHistory = [
         A partir de agora, inicie a conversa com a mensagem: "Olá! Seja bem-vindo(a) à Mega Store. Como posso ajudar você hoje com nossos produtos eletrônicos ou de vestuário?"`
     },
     {
-
 
         role: "model",
         parts: [{ text: "Olá! Seja bem-vindo(a) à Mega Store. Como posso ajudar você hoje com nossos produtos eletrônicos ou de vestuário?" }]
