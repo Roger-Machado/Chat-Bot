@@ -8,7 +8,7 @@ const isTyping = false;
 
 let chatHistory = [
     {
-        role: "user", 
+        role: "user",
         parts: [{ text: `Você é um assistente de chatbot amigável e prestativo para uma loja de departamentos fictícia chamada "Mega Store". Seu principal objetivo é ajudar os clientes com perguntas sobre nossos produtos eletrônicos e produtos de vestuário.
 
         Aqui estão os detalhes sobre os produtos que vendemos:
@@ -43,18 +43,17 @@ let chatHistory = [
             * "Vocês entregam pizza?" -> "Não, não entregamos pizza. Somos uma loja de departamentos. Posso ajudar com eletrônicos ou vestuário?"
 
         A partir de agora, inicie a conversa com a mensagem: "Olá! Seja bem-vindo(a) à Mega Store. Como posso ajudar você hoje com nossos produtos eletrônicos ou de vestuário?"`
+        }]
     },
     {
-
         role: "model",
         parts: [{ text: "Olá! Seja bem-vindo(a) à Mega Store. Como posso ajudar você hoje com nossos produtos eletrônicos ou de vestuário?" }]
     }
-  ]
-}];
+];
 
-  document.addEventListener('DOMContentLoaded', () => {
-        chatbox.innerHTML = ''; 
-        chatbox.appendChild(createChatLi(chatHistory[1].parts[0].text, "incoming"));
+document.addEventListener('DOMContentLoaded', () => {
+    chatbox.innerHTML = ''; 
+    chatbox.appendChild(createChatLi(chatHistory[1].parts[0].text, "incoming"));
     chatbox.scrollTo(0, chatbox.scrollHeight);
 });
 
@@ -124,7 +123,7 @@ const handleChat = () => {
     userMessage = chatInput.value.trim();
     if (!userMessage) return;
 
-    chatInput.value = ""; 
+    chatInput.value = "";
 
     chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
 
@@ -146,7 +145,7 @@ chatInput.addEventListener("keydown", function (e) {
         e.preventDefault();
         handleChat();
     }
-} );
+});
 
 const toggler = document.querySelector(".chatbot-toggler");
 const body = document.body;
@@ -167,8 +166,8 @@ modeToggler.addEventListener("click", () => {
     body.classList.toggle("dark-mode");
 
     if (body.classList.contains("dark-mode")) {
-        icon.textContent = "light_mode"; // troca para sol
+        icon.textContent = "light_mode";
     } else {
-        icon.textContent = "dark_mode"; // troca para lua
+        icon.textContent = "dark_mode";
     }
 });
