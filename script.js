@@ -2,8 +2,7 @@ const chatInput = document.querySelector(".chat-input textarea");
 const sendChatBtn = document.querySelector(".chat-input span");
 const chatbox = document.querySelector(".chatbox");
 
-let userMessage;
-const API_KEY = "AIzaSyA804sysVC42K7fNMyuMRuYi4XbrdpT1BM";
+let UserMessage;
 const isTyping = false;
 
 let chatHistory = [
