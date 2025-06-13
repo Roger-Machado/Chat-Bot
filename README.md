@@ -1,4 +1,3 @@
-# Grupo1
 
 Projeto de Desenvolvimento de um Sistema de Inteligência Artificial.
 
